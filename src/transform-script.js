@@ -47,6 +47,7 @@ exports.transformScript = function transformScript(
         path.node.arguments[0].value = refactorSource(
           include,
           dir,
+          // @ts-ignore
           path.node.arguments[0].value
         )
       }
