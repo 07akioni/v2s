@@ -3,7 +3,7 @@
 const path = require('path')
 const { program } = require('commander')
 
-const { run } = require('../src/run')
+const v2s = require('../src/index')
 
 program
   .option('-d, --delete-source', 'delete .vue source file')
@@ -20,4 +20,4 @@ const filePaths = program.args.map((arg) => {
   return path.resolve(cwd, arg)
 })
 
-run(filePaths, opts)
+v2s(filePaths, opts)

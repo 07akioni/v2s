@@ -3,7 +3,7 @@ const path = require('path')
 const { transformScript } = require('./transform-script')
 const { transformVue } = require('./transform-vue')
 
-exports.run = async function run(filePaths, options = {}) {
+async function v2s(filePaths, options = {}) {
   const { deleteSource } = options
   for (const filePath of filePaths) {
     if (!path.isAbsolute(filePath)) {
@@ -36,3 +36,5 @@ exports.run = async function run(filePaths, options = {}) {
     }
   }
 }
+
+module.exports = v2s
