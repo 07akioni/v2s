@@ -3,13 +3,15 @@ const { parse, compileTemplate } = require('@vue/compiler-sfc')
 const { transformScript } = require('./transform-script')
 
 exports.transformVue = function transformVue(include, filePath, code) {
-  const { name, base } = path.parse(filePath)
+  const { name } = path.parse(filePath)
   const sfcd = parse(code).descriptor
   const isTs = sfcd.script.lang === 'ts'
   const render = compileTemplate({
     source: code,
-    filename: base,
-    id: base
+    // `filename` and `id` is useless since it isn't compiled as `scoped`
+    // TODO: create a PR for vue
+    filename: '__placeholder__',
+    id: '__placeholder__'
   }).code
   const script = transformScript(include, filePath, sfcd.script.content, isTs)
   const renderFileName = `${name}__render`
@@ -18,7 +20,9 @@ exports.transformVue = function transformVue(include, filePath, code) {
     `import { render } from './${renderFileName}'\n` +
     `import script from './${scriptFileName}'\n` +
     '\n' +
-    `export default Object.assign(script, { render })\n`
+    'script.render = render\n' +
+    '\n' +
+    `export default script\n`
   return {
     script,
     scriptFileName,

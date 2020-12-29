@@ -46,4 +46,4 @@ Currently I can think of some ways to do it.
 2. tsc: not working, it doesn't work with `.vue` files.
 3. webpack: not working, can not keep the structure.
 
-I want to use `tsc` to make build the library. So I need a tool to keep tranform all `.vue` files to `.ts` file and modify all the `.vue` import, export statements inside the library.
+I want to use `tsc` to make build the library. So I need a tool to tranform all `.vue` files to `.ts` file and modify all the `.vue` import, export statements inside the library.
