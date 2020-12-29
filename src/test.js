@@ -1,0 +1,5 @@
+import x from './a.vue'
+import x from 'a.vue'
+import x from './a.vue'
+import x from './a.vue'
+export { default } from './a.vue'
