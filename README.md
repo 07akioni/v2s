@@ -1,5 +1,7 @@
 # v2s
 
+Vue to script.
+
 Convert `.vue` file to `.ts|js` file in a treeshakable manner.
 
 ## Installation
