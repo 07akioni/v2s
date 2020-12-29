@@ -12,7 +12,6 @@ exports.transformVue = function transformVue (
   filePath,
   code,
 ) {
-  console.log(filePath)
   const {
     name,
     base
