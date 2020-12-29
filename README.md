@@ -1,22 +1,22 @@
-# v2t
+# v2s
 
-Convert `.vue` file to `.ts` file.
+Convert `.vue` file to `.ts|js` file in a treeshakable manner.
 
 ## Installation
 ```bash
-npm i -D v2t
+npm i -D v2s
 ```
 
 ## Usage
 ```bash
-npx v2t path/to/file
+npx v2s path/to/file
 ```
 
 It will convert `x.vue` to `x.render.ts|js`, `x.script.ts|js` and `x.ts|js` corresponding to the `lang` attribute.
 
 ## Option
-### `-r, --rewrite-path`
-Rewrite relative `.vue` imports and exports.
+### `-r, --refactor`
+Refactor `.vue` import/export statement in `.ts/.js` files. (Only transformed `.vue` imports will be refactored.)
 ### `-d, --delete-source`
 Deelete `.vue` source file.
 
@@ -25,9 +25,9 @@ If you have a vue library and want to build it in a treeshakable manner, you wil
 
 For example:
 ```
-- index.ts      index.js
-- Button.vue => Button.js
-- Input.vue     Input.js
+- index.ts      index.js  + index.d.ts
+- Button.vue => Button.js + Button.d.ts
+- Input.vue     Input.js  + Input.d.ts
 ```
 
 Currently I can think of some ways to do it.
