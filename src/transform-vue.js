@@ -1,21 +1,9 @@
 const path = require('path')
-const {
-  parse,
-  compileTemplate
-} = require('@vue/compiler-sfc')
-const {
-  transformScript
-} = require('./transform-script')
+const { parse, compileTemplate } = require('@vue/compiler-sfc')
+const { transformScript } = require('./transform-script')
 
-exports.transformVue = function transformVue (
-  include,
-  filePath,
-  code,
-) {
-  const {
-    name,
-    base
-  } = path.parse(filePath)
+exports.transformVue = function transformVue(include, filePath, code) {
+  const { name, base } = path.parse(filePath)
   const sfcd = parse(code).descriptor
   const isTs = sfcd.script.lang === 'ts'
   const render = compileTemplate({
@@ -35,7 +23,7 @@ exports.transformVue = function transformVue (
     script,
     scriptFileName,
     render,
-    renderFileName, 
+    renderFileName,
     index,
     isTs
   }

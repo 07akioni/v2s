@@ -5,11 +5,13 @@ Vue to script.
 Convert `.vue` file to `.ts|js` file in a treeshakable manner.
 
 ## Installation
+
 ```bash
 npm i -D v2s
 ```
 
 ## Usage
+
 ```bash
 npx v2s path/to/file
 ```
@@ -17,15 +19,21 @@ npx v2s path/to/file
 It will convert `x.vue` to `x.render.ts|js`, `x.script.ts|js` and `x.ts|js` corresponding to the `lang` attribute.
 
 ## Option
+
 ### `-r, --refactor`
+
 Refactor `.vue` import/export statement in `.ts/.js` files. (Only transformed `.vue` imports will be refactored.)
+
 ### `-d, --delete-source`
-Deelete `.vue` source file.
+
+Delete `.vue` source file.
 
 ## Why it exists
+
 If you have a vue library and want to build it in a treeshakable manner, you will always want to keep the original file structure.
 
 For example:
+
 ```
 - index.ts      index.js  + index.d.ts
 - Button.vue => Button.js + Button.d.ts

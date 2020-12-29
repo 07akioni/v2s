@@ -4,13 +4,15 @@
   "description": "Vue to script.",
   "main": "index.js",
   "scripts": {
+    "lint": "prettier --write src/**/* bin/**/* README.md",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "bin": "bin/cli.js",
   "author": "07akioni",
   "license": "MIT",
   "devDependencies": {
-    "jest": "^26.6.3"
+    "jest": "^26.6.3",
+    "prettier": "^2.2.1"
   },
   "dependencies": {
     "@babel/generator": "^7.12.11",
