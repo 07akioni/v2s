@@ -7,7 +7,7 @@ exports.transformVue = function transformVue(include, filePath, code) {
   const sfcd = parse(code).descriptor
   const isTs = sfcd.script.lang === 'ts'
   const render = compileTemplate({
-    source: code,
+    source: sfcd.template.content,
     // `filename` and `id` is useless since it isn't compiled as `scoped`
     // TODO: create a PR for vue
     filename: '__placeholder__',

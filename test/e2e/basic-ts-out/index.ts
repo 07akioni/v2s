@@ -1,2 +1,2 @@
-export { default as Button } from "./src/Button";
-export { default as Input } from "./src/Input";
+export { default as Button } from './src/Button.vue';
+export { default as Input } from './src/Input.vue';
