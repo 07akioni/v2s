@@ -57,7 +57,7 @@ exports.transformVue = function transformVue(
       renderFunctionNode = path.node.declaration
       path.remove()
     }
-  }) // currently render.js is empty
+  }) // currently render.js is not empty, fot it may contain hoisted node
 
   const scriptAst = parser.parse(script, {
     sourceType: 'module',
@@ -74,6 +74,11 @@ exports.transformVue = function transformVue(
         )
         renderImports.length = 0
       }
+      const lastImport = path
+        .get('body')
+        .filter((p) => p.isImportDeclaration())
+        .pop()
+      if (lastImport) lastImport.insertAfter(renderAst.program.body)
     },
     ExportDefaultDeclaration(path) {
       // export default defineComponent({})
