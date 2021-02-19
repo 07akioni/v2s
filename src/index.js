@@ -26,9 +26,16 @@ async function v2s(filePaths, options = {}) {
         index
       } = transformVue(filePaths, filePath, code)
       const ext = isTs ? '.ts' : '.js'
-      await fs.writeFile(path.resolve(dir, renderFileName + ext), render)
-      await fs.writeFile(path.resolve(dir, scriptFileName + ext), script)
-      await fs.writeFile(path.resolve(dir, name + ext), index)
+
+      if (script === null) {
+        // render and script can be merged
+        await fs.writeFile(path.resolve(dir, name + ext), index)
+      } else {
+        await fs.writeFile(path.resolve(dir, renderFileName + ext), render)
+        await fs.writeFile(path.resolve(dir, scriptFileName + ext), script)
+        await fs.writeFile(path.resolve(dir, name + ext), index)
+      }
+
       // generate ts
       if (deleteSource) {
         await fs.unlink(filePath)
