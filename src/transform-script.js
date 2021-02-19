@@ -23,6 +23,7 @@ exports.transformScript = function transformScript(
   include,
   filePath,
   code,
+  refactorVueImport,
   isTs
 ) {
   const { dir } = path.parse(filePath)
@@ -35,14 +36,16 @@ exports.transformScript = function transformScript(
     ImportDeclaration(path) {
       // if in included files
       // rewrite .vue exts
-      path.node.source.value = refactorSource(
-        include,
-        dir,
-        path.node.source.value
-      )
+      if (refactorVueImport) {
+        path.node.source.value = refactorSource(
+          include,
+          dir,
+          path.node.source.value
+        )
+      }
     },
     CallExpression(path) {
-      if (path.node.callee.type === 'Import') {
+      if (refactorVueImport && path.node.callee.type === 'Import') {
         // @ts-ignore
         path.node.arguments[0].value = refactorSource(
           include,
@@ -53,7 +56,7 @@ exports.transformScript = function transformScript(
       }
     },
     ExportNamedDeclaration(path) {
-      if (path.node.source) {
+      if (refactorVueImport && path.node.source) {
         path.node.source.value = refactorSource(
           include,
           dir,
@@ -62,11 +65,13 @@ exports.transformScript = function transformScript(
       }
     },
     ExportAllDeclaration(path) {
-      path.node.source.value = refactorSource(
-        include,
-        dir,
-        path.node.source.value
-      )
+      if (refactorVueImport) {
+        path.node.source.value = refactorSource(
+          include,
+          dir,
+          path.node.source.value
+        )
+      }
     }
   })
   return generate(ast).code

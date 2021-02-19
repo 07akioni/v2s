@@ -20,9 +20,9 @@ It will convert `x.vue` to `x.render.ts|js`, `x.script.ts|js` and `x.ts|js` corr
 
 ## Option
 
-### `-r, --refactor`
+### `-r, --refactor-vue-import`
 
-Refactor `.vue` import/export statement in `.ts/.js` files. (Only transformed `.vue` imports will be refactored.)
+Refactor `.vue` import/export statement in `.ts/.js/.vue` files. (Only transformed `.vue` imports will be refactored.)
 
 ### `-d, --delete-source`
 

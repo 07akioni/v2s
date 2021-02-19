@@ -8,7 +8,7 @@ const v2s = require('../src/index')
 program
   .option('-d, --delete-source', 'delete .vue source file')
   .option(
-    '-r, --refactor',
+    '-r, --refactor-vue-import',
     'refactor .vue import/export statement in .ts/.js files'
   )
   .parse()

@@ -12,7 +12,12 @@ const { default: generate } = require('@babel/generator')
 
 // for other case, we should still split codes to different files, eg.
 // export (() => defineComponent({}))()
-exports.transformVue = function transformVue(include, filePath, code) {
+exports.transformVue = function transformVue(
+  include,
+  filePath,
+  code,
+  refactorVueImport
+) {
   const { name } = path.parse(filePath)
   const sfcd = parse(code).descriptor
   const isTs = sfcd.script.lang === 'ts'
@@ -23,7 +28,13 @@ exports.transformVue = function transformVue(include, filePath, code) {
     filename: '__placeholder__',
     id: '__placeholder__'
   }).code
-  const script = transformScript(include, filePath, sfcd.script.content, isTs)
+  const script = transformScript(
+    include,
+    filePath,
+    sfcd.script.content,
+    refactorVueImport,
+    isTs
+  )
 
   const renderAst = parser.parse(render, {
     sourceType: 'module',
@@ -56,15 +67,24 @@ exports.transformVue = function transformVue(include, filePath, code) {
   let renderFunctionCanBeMerged = true
 
   traverse(scriptAst, {
-    ImportDeclaration(path) {
+    Program(path) {
       if (renderImports.length) {
-        renderImports.forEach((renderImport) => path.insertBefore(renderImport))
+        renderImports.forEach((renderImport) =>
+          path.node.body.unshift(renderImport)
+        )
         renderImports.length = 0
       }
     },
     ExportDefaultDeclaration(path) {
       // export default defineComponent({})
       const { declaration } = path.node
+      const funcExpr = t.functionExpression(
+        renderFunctionNode.id,
+        renderFunctionNode.params,
+        renderFunctionNode.body,
+        renderFunctionNode.generator,
+        renderFunctionNode.async
+      )
       if (declaration.type === 'CallExpression') {
         if (
           declaration.callee.name === 'defineComponent' &&
@@ -72,25 +92,16 @@ exports.transformVue = function transformVue(include, filePath, code) {
         ) {
           if (declaration.arguments[0].type === 'ObjectExpression') {
             declaration.arguments[0].properties.push(
-              t.objectProperty(
-                t.identifier('render'),
-                t.functionExpression(
-                  renderFunctionNode.id,
-                  renderFunctionNode.params,
-                  renderFunctionNode.body,
-                  renderFunctionNode.generator,
-                  renderFunctionNode.async
-                )
-              )
+              t.objectProperty(t.identifier('render'), funcExpr)
             )
+            return
           }
         }
-        return
       }
       // export default {}
-      else if (path.node.declaration.type === 'ObjectExpression') {
-        path.node.properties.push(
-          t.objectProperty('render', renderFunctionNode)
+      else if (declaration.type === 'ObjectExpression') {
+        declaration.properties.push(
+          t.objectProperty(t.identifier('render'), funcExpr)
         )
         return
       }

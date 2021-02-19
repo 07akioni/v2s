@@ -4,7 +4,7 @@ const { transformScript } = require('./transform-script')
 const { transformVue } = require('./transform-vue')
 
 async function v2s(filePaths, options = {}) {
-  const { deleteSource } = options
+  const { deleteSource, refactorVueImport } = options
   for (const filePath of filePaths) {
     if (!path.isAbsolute(filePath)) {
       throw new Error('[v2s]: Input file path is not absolute path.')
@@ -12,7 +12,10 @@ async function v2s(filePaths, options = {}) {
     if (/\.(js|ts)$/.test(filePath)) {
       const code = (await fs.readFile(filePath)).toString()
       // resolve .ts or .js
-      await fs.writeFile(filePath, transformScript(filePaths, filePath, code))
+      await fs.writeFile(
+        filePath,
+        transformScript(filePaths, filePath, code, refactorVueImport)
+      )
     }
     if (/\.vue$/.test(filePath)) {
       const { dir, name } = path.parse(filePath)
@@ -24,7 +27,7 @@ async function v2s(filePaths, options = {}) {
         script,
         scriptFileName,
         index
-      } = transformVue(filePaths, filePath, code)
+      } = transformVue(filePaths, filePath, code, refactorVueImport)
       const ext = isTs ? '.ts' : '.js'
 
       if (script === null) {
