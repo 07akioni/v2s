@@ -2,7 +2,15 @@
 
 Vue to script.
 
-Convert `.vue` file to `.ts|js` file in a treeshakable manner.
+Convert `.vue` file's template + script to `.ts|js` file in a treeshakable manner.
+
+> Caveat
+>
+> The package only transform template + script part of .vue file, style of SFC is not supported.
+>
+> Vue2 functional template is not supported.
+>
+> Vue2 + script lang="ts" is not supported.
 
 ## Installation
 
@@ -26,7 +34,11 @@ Refactor `.vue` import/export statement in `.ts/.js/.vue` files. (Only transform
 
 ### `-d, --delete-source`
 
-Delete `.vue` source file.
+Delete `.vue` source file after transformation.
+
+### `-vue2, --vue2`
+
+Transform `.vue` file to vue2 API js file.
 
 ## Why it exists
 

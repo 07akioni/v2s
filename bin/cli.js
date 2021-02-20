@@ -11,6 +11,7 @@ program
     '-r, --refactor-vue-import',
     'refactor .vue import/export statement in .ts/.js files'
   )
+  .option('-vue2, --vue2', 'generate vue2 script')
   .parse()
 
 const opts = program.opts()

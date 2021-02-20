@@ -1,10 +1,10 @@
 const fs = require('fs-extra')
 const path = require('path')
 const { transformScript } = require('./transform-script')
-const { transformVue } = require('./transform-vue')
+const { transformVue, transformVue2 } = require('./transform-vue')
 
 async function v2s(filePaths, options = {}) {
-  const { deleteSource, refactorVueImport } = options
+  const { deleteSource, refactorVueImport, vue2 } = options
   for (const filePath of filePaths) {
     if (!path.isAbsolute(filePath)) {
       throw new Error('[v2s]: Input file path is not absolute path.')
@@ -27,7 +27,12 @@ async function v2s(filePaths, options = {}) {
         script,
         scriptFileName,
         index
-      } = transformVue(filePaths, filePath, code, refactorVueImport)
+      } = (vue2 ? transformVue2 : transformVue)(
+        filePaths,
+        filePath,
+        code,
+        refactorVueImport
+      )
       const ext = isTs ? '.ts' : '.js'
 
       if (script === null) {
