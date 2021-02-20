@@ -87,7 +87,8 @@ exports.transformVue = function transformVue(
         .pop()
       if (lastImport) lastImport.insertAfter(renderAst.program.body)
       else {
-        path.get('body').unshift(...renderAst.program.body)
+        // in case there is no render import, which may be impossible
+        path.get('body')[0].insertBefore(renderAst.program.body)
       }
     },
     ExportDefaultDeclaration(path) {
@@ -225,7 +226,7 @@ exports.transformVue2 = function transformVue2(
           .pop()
         if (lastImport) lastImport.insertAfter(renderAst.program.body)
         else {
-          path.get('body').unshift(...renderAst.program.body)
+          path.get('body')[0].insertBefore(renderAst.program.body)
         }
       }
     })

@@ -27,19 +27,13 @@ function transform(code) {
 
 // there can be bugs, however i just want to make it work
 function extractScript(code) {
-  const script = code
-    .replace(/(.|\s)*<script>/, '')
-    .replace(/<\/script>(.|\s)*/, '')
-    .trim()
+  const script = (code.split(/<script>|<\/script>/g)[1] || '').trim()
   if (/export\s+default /.test(script)) return script
   return script + 'export default {}'
 }
 
 function extractTemplate(code) {
-  return code
-    .replace(/(.|\s)*<template>/, '')
-    .replace(/<\/template>(.|\s)*/, '')
-    .trim()
+  return (code.split(/<template>|<\/template>/g)[1] || '').trim()
 }
 
 exports.transformVue2Tpl = transform
