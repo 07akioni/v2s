@@ -53,11 +53,6 @@ exports.transformVue = function transformVue(
    */
   const renderImports = []
   /**
-   * @type Array<import('@babel/types').ImportDeclaration>
-   */
-  const scriptImports = []
-
-  /**
    * @type import('@babel/types').FunctionDeclaration
    */
   let renderFunctionNode
@@ -79,51 +74,9 @@ exports.transformVue = function transformVue(
     plugins: isTs ? ['typescript'] : undefined
   })
 
-  traverse(scriptAst, {
-    ImportDeclaration(path) {
-      scriptImports.push(path.node)
-      path.remove()
-    }
-  })
-
-  const mergedImports = []
-  let vueImport = null
-  for (const importStmt of renderImports.concat(scriptImports)) {
-    if (importStmt.source.value === 'vue') {
-      if (vueImport === null) {
-        vueImport = importStmt
-      } else {
-        vueImport.specifiers.push(...importStmt.specifiers)
-      }
-    } else {
-      mergedImports.push(importStmt)
-    }
-  }
-  if (vueImport !== null) {
-    mergedImports.push(vueImport)
-  }
-
   let renderFunctionCanBeMerged = true
 
   traverse(scriptAst, {
-    Program(path) {
-      if (mergedImports.length) {
-        mergedImports.forEach((renderImport) =>
-          path.node.body.unshift(renderImport)
-        )
-        mergedImports.length = 0
-      }
-      const lastImport = path
-        .get('body')
-        .filter((p) => p.isImportDeclaration())
-        .pop()
-      // add hoisted nodes to script ast
-      if (lastImport) lastImport.insertAfter(renderAst.program.body)
-      else {
-        // in case there is no render import, which may be impossible
-        path.get('body')[0].insertBefore(renderAst.program.body)
-      }
-    },
     ExportDefaultDeclaration(path) {
       // export default defineComponent({})
       const { declaration } = path.node
@@ -160,6 +113,56 @@ exports.transformVue = function transformVue(
   })
 
   if (renderFunctionCanBeMerged) {
+    /**
+     * @type Array<import('@babel/types').ImportDeclaration>
+     */
+    const scriptImports = []
+
+    traverse(scriptAst, {
+      ImportDeclaration(path) {
+        scriptImports.push(path.node)
+        path.remove()
+      }
+    })
+
+    const mergedImports = []
+    let vueImport = null
+    for (const importStmt of renderImports.concat(scriptImports)) {
+      if (importStmt.source.value === 'vue') {
+        if (vueImport === null) {
+          vueImport = importStmt
+        } else {
+          vueImport.specifiers.push(...importStmt.specifiers)
+        }
+      } else {
+        mergedImports.push(importStmt)
+      }
+    }
+    if (vueImport !== null) {
+      mergedImports.push(vueImport)
+    }
+
+    traverse(scriptAst, {
+      Program(path) {
+        if (mergedImports.length) {
+          mergedImports.forEach((renderImport) =>
+            path.node.body.unshift(renderImport)
+          )
+          mergedImports.length = 0
+        }
+        const lastImport = path
+          .get('body')
+          .filter((p) => p.isImportDeclaration())
+          .pop()
+        // add hoisted nodes to script ast
+        if (lastImport) lastImport.insertAfter(renderAst.program.body)
+        else {
+          // in case there is no render import, which may be impossible
+          path.get('body')[0].insertBefore(renderAst.program.body)
+        }
+      }
+    })
+
     return {
       script: null,
       scriptFileName: null,

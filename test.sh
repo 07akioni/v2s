@@ -1,3 +1,5 @@
+# Run the script and check if the repo diffs
+
 rm -rf test/e2e/basic-js/src/*.js
 node bin/cli.js test/e2e/basic-js/**/*
 
@@ -9,7 +11,6 @@ node bin/cli.js test/e2e/basic-ts/**/*
 
 rm -rf test/e2e/basic-vue/*.js
 node bin/cli.js test/e2e/basic-vue/* # **/* will create nothing...
-
 
 rm -rf test/e2e/basic-vue-ts/*.ts
 node bin/cli.js test/e2e/basic-vue-ts/*
