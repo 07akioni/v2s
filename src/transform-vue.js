@@ -48,13 +48,21 @@ exports.transformVue = function transformVue(
     plugins: isTs ? ['typescript'] : undefined
   })
 
+  /**
+   * @type Array<import('@babel/types').ImportDeclaration>
+   */
   const renderImports = []
+  /**
+   * @type Array<import('@babel/types').ImportDeclaration>
+   */
+  const scriptImports = []
 
   /**
    * @type import('@babel/types').FunctionDeclaration
    */
   let renderFunctionNode
 
+  // remove all imports & exported render function
   traverse(renderAst, {
     ImportDeclaration(path) {
       renderImports.push(path.node)
@@ -71,20 +79,45 @@ exports.transformVue = function transformVue(
     plugins: isTs ? ['typescript'] : undefined
   })
 
+  traverse(scriptAst, {
+    ImportDeclaration(path) {
+      scriptImports.push(path.node)
+      path.remove()
+    }
+  })
+
+  const mergedImports = []
+  let vueImport = null
+  for (const importStmt of renderImports.concat(scriptImports)) {
+    if (importStmt.source.value === 'vue') {
+      if (vueImport === null) {
+        vueImport = importStmt
+      } else {
+        vueImport.specifiers.push(...importStmt.specifiers)
+      }
+    } else {
+      mergedImports.push(importStmt)
+    }
+  }
+  if (vueImport !== null) {
+    mergedImports.push(vueImport)
+  }
+
   let renderFunctionCanBeMerged = true
 
   traverse(scriptAst, {
     Program(path) {
-      if (renderImports.length) {
-        renderImports.forEach((renderImport) =>
+      if (mergedImports.length) {
+        mergedImports.forEach((renderImport) =>
           path.node.body.unshift(renderImport)
         )
-        renderImports.length = 0
+        mergedImports.length = 0
       }
       const lastImport = path
         .get('body')
         .filter((p) => p.isImportDeclaration())
         .pop()
+      // add hoisted nodes to script ast
       if (lastImport) lastImport.insertAfter(renderAst.program.body)
       else {
         // in case there is no render import, which may be impossible
