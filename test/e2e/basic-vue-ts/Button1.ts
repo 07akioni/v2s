@@ -1,7 +1,7 @@
-import { createVNode as _createVNode, openBlock as _openBlock, createBlock as _createBlock } from "vue";
+import { openBlock as _openBlock, createElementBlock as _createElementBlock } from "vue";
 export default {
   name: 'Button',
   render: function render(_ctx, _cache) {
-    return _openBlock(), _createBlock("button", null, "Button");
+    return _openBlock(), _createElementBlock("button", null, "Button");
   }
 };

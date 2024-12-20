@@ -1,10 +1,7 @@
 function __v2s_render() {
   var _vm = this;
-
   var _h = _vm.$createElement;
-
   var _c = _vm._self._c || _h;
-
   return _c('svg', {
     attrs: {
       "xmlns": "http://www.w3.org/2000/svg",
@@ -16,7 +13,6 @@ function __v2s_render() {
     }
   })]);
 }
-
 __v2s_render._withStripped = true;
 const __v2s_staticRenderFns = [];
 export default {
